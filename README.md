@@ -19,8 +19,7 @@ This system uses a LangGraph-based state machine to automate and govern the Soft
 
 # Workflow Overview
 Each stage represents an autonomous or human-in-the-loop process, controlled by LangGraph, with conditional transitions (Approve, Denied) for regenerating outputs or progressing forward.
-
-![SDLC Agentic AI Workflow](assets/sdlc_flow.png)
+![Image](https://github.com/user-attachments/assets/9f08dde1-5688-409b-a2dc-81e815be0696)
 
 
 
