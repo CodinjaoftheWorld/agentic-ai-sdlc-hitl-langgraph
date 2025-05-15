@@ -59,11 +59,24 @@ flow_order = [
     "Deployment"
 ]
 
-def progress_badge(node):
-    current = st.session_state.active_node
-    if current not in flow_order:
-        return "🔘"  # unknown or system node like __interrupt__
+# Helper to determine which node should be yellow
+def get_current_node():
+    active_node = st.session_state.get("active_node", "")
+    
+    if active_node == "__interrupt__":
+        # Walk backwards in event history to find the last known human node
+        for event in reversed(st.session_state.get("events", [])):
+            for node_name in event:
+                if node_name in flow_order:
+                    return node_name
+        return ""  # fallback
+    return active_node
 
+# Updated badge function
+def progress_badge(node):
+    current = get_current_node()
+    if current not in flow_order:
+        return "🔘"
     if flow_order.index(node) < flow_order.index(current):
         return "🟢"
     elif node == current:
@@ -71,9 +84,15 @@ def progress_badge(node):
     else:
         return "⚪"
 
+# Display the tracker
 st.markdown("""## 🔄 SDLC Progress Tracker""")
 
+current_node = get_current_node()
+st.caption(f"🟢 Completed  |  🟡 In Progress  |  ⚪ Not Started      💡 Go to: **{current_node}**" if current_node else "🟢 Completed  |  🟡 In Progress  |  ⚪ Not Started")
+
+# Render the flow with badges
 st.markdown(" → ".join(f"{progress_badge(n)} {n}" for n in flow_order))
+
 
 # Tab-based layout
 tabs = st.tabs(["User Requirements", "User Stories", "Design Document", "Code", "Test Cases", "Security", "QA", "Deployment"])
